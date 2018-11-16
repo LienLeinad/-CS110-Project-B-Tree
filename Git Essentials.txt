@@ -1,0 +1,36 @@
+Git Commands
+
+Setup:
+1. git init
+2. git remote add remoteName urlToRepo
+3. git pull remoteName branchYouWantToPull
+//Note that pulling a branch doesn't necessarily put you on that branch
+
+Branching:
+1. git branch
+	- to check which branch you're on
+2. git branch nameOfNewBranch
+	- to create a new branch
+3. git checkout branchName
+	- to move to branchName
+	
+	
+Steps to updating online repository with files from your local repo:
+1. git add .
+2. git commit -m "Description" -m "Other description, if you like"
+3. git push origin branchname
+	- If this returns an error
+		- That means there are conflicts.
+		- Run "git pull remoteName branchYouAreCommitingTo".
+		- This will then tell you which files had conflicts (which are the files you have to fix)
+		- Fix those files.
+		- Start from step 1 again.
+
+Extra:
+1. git log
+	- shows you the commits into the branch that you're on
+2. git log --all --decorate --oneline --graph
+	- shows you a graph of how your branches and commits connect to each other
+
+
+Important: Generally, you don't push directly into master. You push to a branch you created and then merge them.
