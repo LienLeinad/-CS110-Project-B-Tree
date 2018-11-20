@@ -2,13 +2,10 @@ import java.io.*;
 
 public class ValuesManager {
 
-	private String fileName;
 	private long numRecords;
-	private RandomAccessFile myFile1;
+	private RandomAccessFile val;
 
 	public ValuesManager(String name) throws IOException {
-		fileName = name;
-
 		File myFile = new File(name);
 
 		// Check if the file exists 
@@ -16,24 +13,24 @@ public class ValuesManager {
 			// System.out.println("Exists");
 
 			// Create the RandomAccessFile
-			myFile1 = new RandomAccessFile(myFile,"rwd");
+			val = new RandomAccessFile(myFile,"rwd");
 
 			// Seek to byte index which refers to number of records
-			myFile1.seek(0);
+			val.seek(0);
 
 			// Set numRecords to the long within this 
-			numRecords = myFile1.readLong();
+			numRecords = val.readLong();
 		}
 
 		else {
 			
 			// Creates the new file and sets numRecords to 0
-			myFile1 = new RandomAccessFile(myFile,"rwd");
+			val = new RandomAccessFile(myFile,"rwd");
 			numRecords = 0;
 
 			// Initializes the value of the numRecords of the file
-			myFile1.seek(0);
-			myFile1.writeLong(numRecords);	
+			val.seek(0);
+			val.writeLong(numRecords);	
 		}
 
 		// Record checker
@@ -42,17 +39,17 @@ public class ValuesManager {
 
 	public long insert(String value) throws IOException {
 		// Update the val file to have correct numRecords
-		myFile1.seek(0);
-		myFile1.writeLong(numRecords + 1);
+		val.seek(0);
+		val.writeLong(numRecords + 1);
 
 		// Sets the file pointer to the appropriate location
-		myFile1.seek(8 + (numRecords * 256));
+		val.seek(8 + (numRecords * 256));
 
 		// Writes the length of the String
-		myFile1.writeInt(value.length());
+		val.writeInt(value.length());
 
 		// Write the String value
-		myFile1.writeBytes(value);
+		val.writeBytes(value);
 
 		// Returns the record number then increments
 		return numRecords++;
@@ -60,7 +57,7 @@ public class ValuesManager {
 
 	public void close() {
 		try {
-			myFile1.close();
+			val.close();
 		} catch (IOException e) {
 			;
 		}

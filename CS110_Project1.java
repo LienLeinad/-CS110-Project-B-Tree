@@ -4,6 +4,7 @@ import java.util.*;
 public class CS110_Project1 {
 
 	private static ValuesManager val;
+	private static BTreeManager bt;
 
 	public static void main(String[] args) {
 		// create the files
@@ -12,8 +13,8 @@ public class CS110_Project1 {
 			// Creates the file that will contain the values
 			val = new ValuesManager(args[1]);
 
-			// Creates the B-Tree file
-			RandomAccessFile bt = new RandomAccessFile(args[0], "rwd");
+			// Creates the .bt file whichi will contain the keys, and offsets to the values from the .val file
+			bt = new BTreeManager(args[0]);
 		}
 
 		catch(IOException e) {
@@ -35,11 +36,13 @@ public class CS110_Project1 {
 
 			if (cmd.equals("exit")) {
 				val.close();
+				bt.close();
 				break;
 			}
 
 			else if (cmd.equals("insert")) {
 				long key = 0;
+				// if the inputs length is just 2, then it means the user inserted an empty string
 				try{
 					key = Long.parseLong(inputs[1]);	
 					if (inputs.length == 2){
@@ -52,7 +55,7 @@ public class CS110_Project1 {
 					System.out.println("ERROR: invalid key input, Please enter an integer");
 				}
 				
-				// if the inputs length is just 2, then it means the user inserted an empty string
+				
 
 			}
 			else if (cmd.equals("search")) {
@@ -86,7 +89,8 @@ public class CS110_Project1 {
 		long recordNumber = -1;
 
 		try{
-			recordNumber = val.insert(value);	
+			recordNumber = val.insert(value);
+
 		}catch(IOException ie){
 			;
 		}
