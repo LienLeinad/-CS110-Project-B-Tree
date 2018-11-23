@@ -28,6 +28,9 @@ public class BTreeManager{
 			rootNum = 0;
 			bt.seek(9);
 			bt.writeLong(rootNum);
+			//initiate the parent of the first node to be -1 since there's no parent yet
+			bt.seek(17);
+			bt.writeLong(-1);
 		}	
 	}
 	// insert method will insert the key integer as well as its corresponding offset for the object (From the data.val)
