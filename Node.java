@@ -8,41 +8,40 @@ public class Node
 	private static int keyCount;
 	public static int keyOffset;
 	
-	public Node()
-	{
+	public Node() {
 		// no parameters - empty node
 		// haven't taken care of splitting case yet
 		// node record consists of 14 "pointers" of type long int
 		keyArray = new long[14];
 		// initialize -1 values within the long[] array
-		for (int i = 0; i < 14; i++)
-		{
+		for (int i = 0; i < 14; i++) {
 			keyArray[i] = -1;
 		}
+
 		// set starting values for keyCount and keyOffset
 		keyCount = 0;
 		keyOffset = 0;
 	}
 	
-	public static void insertKey(long keyVal)
-	{
-		if(keyCount == 0) // case for empty Node
-		{
+	public static void insertKey(long keyVal) {
+		if(keyCount == 0) {// case for empty Node
 			// set values for key and offset in the "first" location
 			keyArray[2] = keyVal;
 			keyArray[3] = keyOffset;
+
 			// increment offset and key counter
 			keyOffset+=1;
 			keyCount+=1;
 			System.out.println("Key inserted");
 		}
-		else if (keyCount < 4) // case for less than 4 keys
-		{
+
+		else if (keyCount < 4) {// case for less than 4 keys
 			// j refers to the index of the rightmost keyArray
 			// 3x-1 is used as the locations of the first 4 keys within the array are 2, 5, 8, and 11 respectively
 			int j = ((3*keyCount)-1);
-			while (j >= 2 && keyArray[j] > keyVal) // while loop to move larger values to the right while locating the position for the current key to be inserted
-			{
+
+			// while loop to move larger values to the right while locating the position for the current key to be inserted		
+			while (j >= 2 && keyArray[j] > keyVal) {
 				// this moving and locating algorithm is based off of geeksforgeeks' BTree insertNonFull method
 				// website link: https://www.geeksforgeeks.org/b-tree-set-1-insert-2/
 				keyArray[j+3] = keyArray[j];
@@ -50,31 +49,74 @@ public class Node
 				j = j - 3;
 				System.out.println("Rearranged successfully");
 			}
+
 			// place value to be inserted and offset to be inserted in their proper place
 			keyArray[j+3] = keyVal;
 			keyArray[j+4] = keyOffset;
+
 			// increment offset and key counter
 			keyCount+=1;
 			keyOffset+=1;
 			System.out.println("Key inserted");
 		}
-		else if (keyCount == 4)
-		{
+
+		else if (keyCount == 4) {
 			keyArray[13] = keyVal;
 			System.out.println("Key inserted, node full! No split handling yet!");
 		}
 	}
+
+	public static String printNode() {
+		return Arrays.toString(keyArray);		
+	}
+
+	public static int search(long key) {
+		long findKey = 0;
+		long count = 1;
+		long i = 0;
+
+		while (i < 4) {
+
+			findKey = ((3*count) - 1);
+
+			if (keyArray[(int)findKey] == key)
+				break;
+			else {
+				count++;
+				i++;
+			}
+		}
+
+		// returns the offset value
+		return (int)(3 * count);
+	}
 	
 	public static void main(String[] args)
 	{
+		Scanner in = new Scanner(System.in);
+
 		Node testNode = new Node();
 		// these values are the ones found in the PowerPoint prior to the splitting
 		// you can crosscheck the final printed array with the one in the PowerPoint
-		Node.insertKey(8);
-		Node.insertKey(11);
-		Node.insertKey(6);
-		Node.insertKey(14);
-		System.out.println(Arrays.toString(keyArray));
+		// Node.insertKey(8);
+		// Node.insertKey(11);
+		// Node.insertKey(6);
+		// Node.insertKey(14);
+
+		while (true) {
+			int n = in.nextInt();
+
+			if (n != 0) {
+				Node.insertKey(n);
+				System.out.println("Index number of Key Offset: " + keyArray[search(n)]);
+			}
+			else
+				break;
+		}
+
+
+
+		System.out.println(printNode());
 		System.out.println("Number of keys: " + keyCount);
 		System.out.println("Current offset: " + keyOffset);
 	}
