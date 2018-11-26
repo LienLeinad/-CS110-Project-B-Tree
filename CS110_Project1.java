@@ -15,9 +15,8 @@ public class CS110_Project1 {
 
 			// Creates the .bt file whichi will contain the keys, and offsets to the values from the .val file
 			bt = new BTreeManager(args[0]);
-		}
 
-		catch(IOException e) {
+		} catch(IOException e) {
 			;
 		}
 
@@ -27,6 +26,7 @@ public class CS110_Project1 {
 		while (in.hasNextLine()) {
 			// read the line of commands + arguments
 			String inputLine = in.nextLine();
+
 			//split into an array of size 3
 			//[0] = cmd, [1] = key, [2] = object(if applicable)
 			String[] inputs = inputLine.split(" ", 3);
@@ -37,50 +37,50 @@ public class CS110_Project1 {
 			if (cmd.equals("exit")) {
 				bt.close();
 				val.close();
-				
 				break;
 			}
 
 			else if (cmd.equals("insert")) {
 				long key = 0;
+
 				// if the inputs length is just 2, then it means the user inserted an empty string
-				try{
-					key = Long.parseLong(inputs[1]);	
-					if (inputs.length == 2){
+				try {
+					key = Long.parseLong(inputs[1]);
+					if (inputs.length == 2) {
 						insert(key, "");
 					}
-					else{
+					else {
 						insert(key, inputs[2]);
 					}
-				}catch(NumberFormatException nfe){
+				} catch(NumberFormatException nfe) {
 					System.out.println("ERROR: invalid key input, Please enter an integer");
-				}catch(IndexOutOfBoundsException iobe){
+				} catch(IndexOutOfBoundsException iobe) {
 					System.out.println("Error: Syntax error, please put an integer");
 				}
-
-				
-				
-
 			}
-			else if (cmd.equals("search")) {
+
+			else if (cmd.equals("select")) {
 				long key = 0;
-				try{
+				try {
 					key = Long.parseLong(inputs[1]);	
-					search(key);
-				}catch(NumberFormatException nfe){
+					select(key);
+				} catch(NumberFormatException nfe) {
 					System.out.println("ERROR: invalid key input, Please enter an integer");
+				} catch(IOException io) {
+					;
 				}
 				
 			}
+
 			else if (cmd.equals("update")) {
 				long key = 0;
-				try{
+				try {
 					key = Long.parseLong(inputs[1]);	
 					update(key, inputs[2]);
-				}catch(NumberFormatException nfe){
+				} catch(NumberFormatException nfe) {
 					System.out.println("ERROR: invalid key input, Please enter an integer");
-				}catch(IndexOutOfBoundsException ie){
-					update(key,"");
+				} catch(IndexOutOfBoundsException ie) {
+					System.out.println("Error: Syntax error, please put an integer");
 				}
 			}
 
@@ -99,21 +99,24 @@ public class CS110_Project1 {
 			bt.insert(key,recordNumber);
 			System.out.printf("--> in method insert( long key, String value ), value %s inserted at index %d\n", value, recordNumber);
 
-		}catch(IOException ie){
+		} catch(IOException ie) {
 			System.out.println("IOException at insert method at CS110_Project1.java");
-		}catch(SameKeyException ske){
+		} catch(SameKeyException ske) {
 			System.out.println("Key already in the database, please use a different key");
 			val.deleteLast();
 		}
-		
-		
 	}
-	public static void search(long key) {
-		
+
+	public static void select(long key) throws IOException {
+		// searches for the index number
+		long offSetKey = bt.select(key);
+		// returns the object value from the val file
+		String offSetObject = val.select(offSetKey);
+
+		System.out.println(key + " => " + offSetObject);
 	}
+
 	public static void update(long key, String value) {
 		System.out.println( "UPDATED:"+ " "+ key + " " + value);
 	}
-
-
 }
