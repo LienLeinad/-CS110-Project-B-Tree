@@ -80,7 +80,7 @@ public class CS110_Project1 {
 				}catch(NumberFormatException nfe){
 					System.out.println("ERROR: invalid key input, Please enter an integer");
 				}catch(IndexOutOfBoundsException ie){
-					update(key,"");
+					System.out.println("Error: Syntax error, please put an integer");
 				}
 			}
 
