@@ -21,7 +21,7 @@ public class BTreeManager{
 			bt.seek(0);
 			numRecords = bt.readLong();
 			//initialize rootNum as whatever is in byte 9-16
-			bt.seek(9);
+			bt.seek(8);
 			rootNum = bt.readLong();
 
 			//create the node object for each record and add them into nodes
@@ -46,7 +46,7 @@ public class BTreeManager{
 			bt.writeLong(numRecords);
 			// initialize byte as 0, since the root would be the 0th record
 			rootNum = 0;
-			bt.seek(9);
+			bt.seek(8);
 			bt.writeLong(rootNum);
 		}	
 	}
@@ -66,14 +66,18 @@ public class BTreeManager{
 	}
 	// writes all nodes into the bt.file before closing
 	public void close(){
+		System.out.println("close method from BTreeManager");
 		try{
 			// seek to the first long
 			bt.seek(16);
-			for (Node n : nodes ) {
-				long[] nums = n.giveArray();
-				for(long l: nums){
+			System.out.println("Seeked to 16");
+			for (int i = 0; i < nodes.size(); i ++) {
+				System.out.println("temp createad");
+				Node temp = nodes.get(i);
+				long[] nums = temp.giveArray();
+				for (long l : nums) {
 					bt.writeLong(l);
-					System.out.println(l + "has been written");
+					System.out.println("l is written");
 				}
 			}
 			bt.close();
@@ -85,6 +89,7 @@ public class BTreeManager{
 	public void createFirstNode(){
 		// create a node object which will accept the array, and then increment numRecords by 1, this node will be the root node
 		root = new Node();
+		nodes.add(root);
 		numRecords++;
 	}
 	// given a long from a certain byte, creates a nodeObject for it

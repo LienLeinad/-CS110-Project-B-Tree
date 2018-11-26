@@ -35,8 +35,9 @@ public class CS110_Project1 {
 			String cmd = inputs[0];
 
 			if (cmd.equals("exit")) {
-				val.close();
 				bt.close();
+				val.close();
+				
 				break;
 			}
 
