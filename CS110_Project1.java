@@ -89,10 +89,13 @@ public class CS110_Project1 {
 		long recordNumber = -1;
 
 		try{
+			// insert the object into the.val file, retrieve its record number within the file
 			recordNumber = val.insert(value);
+			// insert the key and the recordnumber into .bt file
+			bt.insert(key,recordNumber);
 
 		}catch(IOException ie){
-			;
+			System.out.println("IOException at insert method at CS110_Project1.java");
 		}
 		
 		System.out.printf("--> in method insert( long key, String value ), value %s inserted at index %d\n", value, recordNumber);
