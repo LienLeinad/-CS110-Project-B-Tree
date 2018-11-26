@@ -57,6 +57,7 @@ public class CS110_Project1 {
 				}catch(IndexOutOfBoundsException iobe){
 					System.out.println("Error: Syntax error, please put an integer");
 				}
+
 				
 				
 
@@ -96,12 +97,16 @@ public class CS110_Project1 {
 			recordNumber = val.insert(value);
 			// insert the key and the recordnumber into .bt file
 			bt.insert(key,recordNumber);
+			System.out.printf("--> in method insert( long key, String value ), value %s inserted at index %d\n", value, recordNumber);
 
 		}catch(IOException ie){
 			System.out.println("IOException at insert method at CS110_Project1.java");
+		}catch(SameKeyException ske){
+			System.out.println("Key already in the database, please use a different key");
+			val.deleteLast();
 		}
 		
-		System.out.printf("--> in method insert( long key, String value ), value %s inserted at index %d\n", value, recordNumber);
+		
 	}
 	public static void search(long key) {
 		System.out.println( "SEARCH"+ " "+ key);

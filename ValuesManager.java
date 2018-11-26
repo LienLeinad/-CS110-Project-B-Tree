@@ -54,6 +54,10 @@ public class ValuesManager {
 		// Returns the record number then increments
 		return numRecords++;
 	}
+	// for same key error
+	public void deleteLast(){
+		numRecords--;
+	}
 
 	public void close() {
 		try {
