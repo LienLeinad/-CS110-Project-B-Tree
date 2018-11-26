@@ -109,7 +109,7 @@ public class CS110_Project1 {
 		
 	}
 	public static void search(long key) {
-		System.out.println( "SEARCH"+ " "+ key);
+		
 	}
 	public static void update(long key, String value) {
 		System.out.println( "UPDATED:"+ " "+ key + " " + value);

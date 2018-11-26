@@ -24,12 +24,12 @@ public class BTreeManager{
 			bt.seek(8);
 			rootNum = bt.readLong();
 
-			/*//create the node object for each record and add them into nodes
+			//create the node object for each record and add them into nodes
 			for(int i = 0; i < numRecords; i ++){
 				nodes.add(createNode(i));				
-			}*/
+			}
 
-			nodes.add(createNode(0));
+			// nodes.add(createNode(0));
 
 			// point the root to be the one in rootNum
 			root = nodes.get((int)rootNum);
@@ -92,7 +92,7 @@ public class BTreeManager{
 	// creates the FIRST node of a NEW B-tree
 	public void createFirstNode(){
 		// create a node object which will accept the array, and then increment numRecords by 1, this node will be the root node
-		root = new Node();
+		root = new Node(numRecords);
 		nodes.add(root);
 		numRecords++;
 	}
@@ -103,10 +103,9 @@ public class BTreeManager{
 		return root.search(key);
 	}
 
-	// given a long from a certain byte, creates a nodeObject for it
+	// given a long from a certain byte, creates a nodeObject for it, to be used for when creating nodes from existing .bt files
 	public Node createNode(long recNum){
 		long[] nums = new long[14];
-		// TO BE IMPROVED ON SOON:
 		// takes each long from the record in data.bt and adds it into nums
 		try{
 			// seek into first long of the record
@@ -119,8 +118,11 @@ public class BTreeManager{
 
 			System.out.println("IOException at createNode");
 		} 
-		numRecords++;
 		//return a newly created node with the array taken from the file
-		return new Node(nums);
+		return new Node(nums,recNum);
 	}
+
+	//in case of a split, use this code creation method
+
+
 }

@@ -6,9 +6,9 @@ public class Node
 	// otherwise, i think is the only thing that should be static since it's global for all Nodes
 	private long[] keyArray;
 	private int keyCount;
-
+	private long recNumb;
 	
-	public Node()
+	public Node(long recNum)
 	{
 		// no parameters - empty node
 		// haven't taken care of splitting case yet
@@ -21,10 +21,12 @@ public class Node
 		}
 		// set starting values for keyCount
 		keyCount = 0;
+		//set the record number for the node
+		recNumb = recNum;
 	
 	}
 	
-	public Node(long[] nums){
+	public Node(long[] nums, long recNum){
 		// take nums as the array of the node object
 		keyArray = nums;
 		// count how many are not -1 in the keys to set keyCount
@@ -33,7 +35,8 @@ public class Node
 				keyCount++;
 			}
 		}
-
+		//set the recordnumber for the node
+		recNumb = recNum;
 
 
 	}
