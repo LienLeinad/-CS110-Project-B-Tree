@@ -70,14 +70,14 @@ public class BTreeManager{
 		try{
 			// seek to the first long
 			bt.seek(16);
-			System.out.println("Seeked to 16");
+			// System.out.println("Seeked to 16");
 			for (int i = 0; i < nodes.size(); i ++) {
-				System.out.println("temp createad");
+				// System.out.println("temp createad");
 				Node temp = nodes.get(i);
 				long[] nums = temp.giveArray();
 				for (long l : nums) {
 					bt.writeLong(l);
-					System.out.println("l is written");
+					// System.out.println("l is written");
 				}
 			}
 			bt.close();
