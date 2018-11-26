@@ -56,7 +56,7 @@ public class BTreeManager{
 	// insert method will insert the key integer as well as its corresponding offset for the object (From the data.val)
 	// returns an int regarding where the current root node is
 	//ONLY INSERTS IN ROOT FOR NOW!!!
-	public long insert(long key, long offset){
+	public long insert(long key, long offset) throws SameKeyException{
 		root.insert(key,offset);
 		return rootNum;
 	}
@@ -96,6 +96,13 @@ public class BTreeManager{
 		nodes.add(root);
 		numRecords++;
 	}
+
+	//returns offset given a key
+	//TO BE IMPROVED ON ONCE SPLITTING IS IMPLEMENTED
+	public long select(long key){
+		return root.search(key);
+	}
+
 	// given a long from a certain byte, creates a nodeObject for it
 	public Node createNode(long recNum){
 		long[] nums = new long[14];
@@ -104,9 +111,7 @@ public class BTreeManager{
 		try{
 			// seek into first long of the record
 			bt.seek(16 + 112*recNum);
-			for(int i = 0; i < nums.length; i++){
-				
-				
+			for(int i = 0; i < nums.length; i++){				
 				// add to the index
 				nums[i] = bt.readLong();
 			}
