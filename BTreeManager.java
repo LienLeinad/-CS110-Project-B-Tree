@@ -24,10 +24,13 @@ public class BTreeManager{
 			bt.seek(8);
 			rootNum = bt.readLong();
 
-			//create the node object for each record and add them into nodes
+			/*//create the node object for each record and add them into nodes
 			for(int i = 0; i < numRecords; i ++){
 				nodes.add(createNode(i));				
-			}
+			}*/
+
+			nodes.add(createNode(0));
+
 			// point the root to be the one in rootNum
 			root = nodes.get((int)rootNum);
 
@@ -66,20 +69,21 @@ public class BTreeManager{
 	}
 	// writes all nodes into the bt.file before closing
 	public void close(){
-		System.out.println("close method from BTreeManager");
+		// System.out.println("close method from BTreeManager");
 		try{
 			// seek to the first long
 			bt.seek(16);
-			// System.out.println("Seeked to 16");
+			
 			for (int i = 0; i < nodes.size(); i ++) {
-				// System.out.println("temp createad");
+				
 				Node temp = nodes.get(i);
 				long[] nums = temp.giveArray();
 				for (long l : nums) {
 					bt.writeLong(l);
-					// System.out.println("l is written");
 				}
+				System.out.println(Arrays.toString(nums));
 			}
+
 			bt.close();
 		}catch(IOException e){
 			System.out.println("IOException at close method");
@@ -98,9 +102,11 @@ public class BTreeManager{
 		// TO BE IMPROVED ON SOON:
 		// takes each long from the record in data.bt and adds it into nums
 		try{
+			// seek into first long of the record
+			bt.seek(16 + 112*recNum);
 			for(int i = 0; i < nums.length; i++){
-				// seek to the byte of each individual long
-				bt.seek((14*recNum) + 3 + (i*8));
+				
+				
 				// add to the index
 				nums[i] = bt.readLong();
 			}
