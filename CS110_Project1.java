@@ -112,7 +112,6 @@ public class CS110_Project1 {
 		long offSetKey = bt.select(key);
 		// returns the object value from the val file
 		String offSetObject = val.select(offSetKey);
-
 		System.out.println(key + " => " + offSetObject);
 	}
 

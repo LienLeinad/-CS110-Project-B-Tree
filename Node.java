@@ -115,8 +115,8 @@ public class Node {
 			}
 		}
 
-		int temp = (int) (3 * count);
-		long temp2 = keyArray[temp];
+		long temp = (3 * count);
+		long temp2 = keyArray[(int)temp];
 
 		// returns the offset value
 		return temp2;

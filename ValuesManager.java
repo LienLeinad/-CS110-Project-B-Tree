@@ -1,5 +1,5 @@
 import java.io.*;
-import java.lang.*;
+import java.util.*;
 
 public class ValuesManager {
 
@@ -50,7 +50,7 @@ public class ValuesManager {
 		val.writeInt(value.length());
 
 		// Write the String value
-		val.writeBytes(value);
+		val.writeUTF(value);
 
 		// Returns the record number then increments
 		return numRecords++;
@@ -64,15 +64,12 @@ public class ValuesManager {
 		val.seek(8 + (key * 256));
 		
 		// reads the length of the word
-		int len = val.readByte();
+		int len = val.readInt();
 
-		String m = "";
+		// reads the String and stores it in the objectValue
+		String objectValue = val.readUTF();
 
-		for (int i = 0; i < len; i++) {
-			m += val.readByte();
-		}
-
-		return m;
+		return objectValue;
 	}
 
 	// for same key error
