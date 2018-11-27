@@ -99,7 +99,7 @@ public class CS110_Project1 {
 		} catch(IOException ie) {
 			System.out.println("IOException at insert method at CS110_Project1.java");
 		} catch(SameKeyException ske) {
-			System.out.println("Key already in the database, please use a different key");
+			System.out.printf("ERROR: %d already exists.\n", key);
 			val.deleteLast();
 		}
 	}
@@ -114,8 +114,6 @@ public class CS110_Project1 {
 
 		} catch(IOException ie) {
 			System.out.printf("ERROR: %d does not exist.\n", key);
-		} catch(KeyNotFoundException ke) {
-			/*System.out.printf("ERROR: %d does not exist.\n", key)*/;
 		} catch(ArrayIndexOutOfBoundsException ae) {
 			System.out.printf("ERROR: %d does not exist.\n", key);
 		}
