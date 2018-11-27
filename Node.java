@@ -98,7 +98,7 @@ public class Node {
 		return keyArray;
 	}
 
-	public long select(long key) {
+	public long select(long key) throws ArrayIndexOutOfBoundsException {
 		long findKey = 0;
 		long count = 1;
 		long i = 0;

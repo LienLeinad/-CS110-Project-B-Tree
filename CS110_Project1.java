@@ -66,10 +66,7 @@ public class CS110_Project1 {
 					select(key);
 				} catch(NumberFormatException nfe) {
 					System.out.println("ERROR: invalid key input, Please enter an integer");
-				} catch(IOException io) {
-					;
-				}
-				
+				} 				
 			}
 
 			else if (cmd.equals("update")) {
@@ -97,7 +94,7 @@ public class CS110_Project1 {
 			recordNumber = val.insert(value);
 			// insert the key and the recordnumber into .bt file
 			bt.insert(key,recordNumber);
-			System.out.printf("--> in method insert( long key, String value ), value %s inserted at index %d\n", value, recordNumber);
+			System.out.println(key + " inserted.");
 
 		} catch(IOException ie) {
 			System.out.println("IOException at insert method at CS110_Project1.java");
@@ -107,12 +104,21 @@ public class CS110_Project1 {
 		}
 	}
 
-	public static void select(long key) throws IOException {
-		// searches for the index number
-		long offSetKey = bt.select(key);
-		// returns the object value from the val file
-		String offSetObject = val.select(offSetKey);
-		System.out.println(key + " => " + offSetObject);
+	public static void select(long key) {
+		try {
+			// searches for the index number
+			long offSetKey = bt.select(key);
+			// returns the object value from the val file
+			String offSetObject = val.select(offSetKey);
+			System.out.println(key + " => " + offSetObject);
+
+		} catch(IOException ie) {
+			System.out.printf("ERROR: %d does not exist.\n", key);
+		} catch(KeyNotFoundException ke) {
+			/*System.out.printf("ERROR: %d does not exist.\n", key)*/;
+		} catch(ArrayIndexOutOfBoundsException ae) {
+			System.out.printf("ERROR: %d does not exist.\n", key);
+		}
 	}
 
 	public static void update(long key, String value) {

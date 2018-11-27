@@ -100,7 +100,7 @@ public class BTreeManager{
 
 	//returns offset given a key
 	//TO BE IMPROVED ON ONCE SPLITTING IS IMPLEMENTED
-	public long select(long key){
+	public long select(long key) throws KeyNotFoundException {
 		return root.select(key);
 	}
 
