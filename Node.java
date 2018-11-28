@@ -114,7 +114,7 @@ public class Node
 		for (int i = 2; i < keyArray.length; i+=3 ) {
 			if(keyArray[i] == key){
 				// once its found return the value of the index before it
-				offSet = keyArray[i+1];
+				offSet = keyArray[i+2];
 			}
 		}
 		return offSet;
@@ -147,7 +147,7 @@ public class Node
 		//increment numChildren
 		numChild++;
 		// insert at the index After it the offset of the right child
-		keyArray[keyPointer+1] = childOffset;
+		keyArray[keyPointer+2] = childOffset;
 
 	}
 
@@ -208,6 +208,16 @@ public class Node
 		}
 		else if (keyCount == 4)// splitting needed
 		{
+			boolean hasSameKey = false;
+			for (int i = 2; i < 13; i += 3 ) {
+					if (keyArray[i] == keyVal){
+						hasSameKey = true;
+						break;
+					}
+				}
+				if(hasSameKey){
+					throw new SameKeyException();
+				}
 			// check if the keyVal and offset should be in excess (meaning it's bigger than the biggest key in the node)
 			if(keyVal > keyArray[11]){
 				// if it is bigger, it belongs in excess

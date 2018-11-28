@@ -23,7 +23,7 @@ public class BTreeManager{
 			//initialize rootNum as whatever is in byte 9-16
 			bt.seek(8);
 			rootNum = bt.readLong();
-
+			System.out.println(numRecords);
 			//create the node object for each record and add them into nodes
 			for(int i = 0; i < numRecords; i ++){
 				nodes.add(createNode(i));				
@@ -57,13 +57,29 @@ public class BTreeManager{
 	// returns an int regarding where the current root node is
 	//ONLY INSERTS IN ROOT FOR NOW!!!
 	public long insert(long key, long offset) throws SameKeyException{
-		if(rootNum == 0){ // if the root is also the first node
+		if(rootNum == 0 || numRecords == 1){ // if the root is also the first node
 			//check if it's not full
 			if(root.getKeyCount() != 4){
+				//check first if it has a key that's the same as what youre inserting
+				for (int i = 1; i <= root.getKeyCount();  i++) {
+					long rootKey = root.giveKey(i);
+					if(key == rootKey){
+						throw new SameKeyException();
+						// return -1;
+					}
+				}
 				//add
+				System.out.println("inserted at root");
 				root.insert(key,offset);
 			}
 			else if(root.getKeyCount() == 4){//root needs to be split now
+				for (int i = 1; i <= root.getKeyCount();  i++) {
+					long rootKey = root.giveKey(i);
+					if(key == rootKey){
+						throw new SameKeyException();
+						// return -1;
+					}
+				}
 				long[] excess = root.insert(key,offset);
 				// long excessChild = root.getExcessChild();
 				split(excess, root, (long)-1);
@@ -77,15 +93,15 @@ public class BTreeManager{
 			// look through all the keys of the current node
 			// do this while currentNode is not a leaf
 			while(!currentNode.nodeIsLeaf()){
+
 				boolean hasChanged = false;
-				for (int i = 1; i < currentNode.getKeyCount();i++) {
+				for (int i = 1; i <= currentNode.getKeyCount();i++) {
 					//get key at index i
 					long nodeKey = currentNode.giveKey(i);
-					//check first if the key and the nodeKey are equal, this is to prevent same keys
-					if(key == nodeKey){
+					// if the nodeKey is greater than key, thereore it belongs to the left child
+					if(nodeKey == key){
 						throw new SameKeyException();
 					}
-					// if the nodeKey is greater than key, thereore it belongs to the left child
 					if(key < nodeKey){
 						//look through this node nowwwwwwww
 						currentNode = nodes.get((int) currentNode.getLeftChild(nodeKey));
@@ -96,7 +112,7 @@ public class BTreeManager{
 				}	
 				// if at this point the currentNode hasn't changed, then the right child of the last key is the new currentNode
 				if(!hasChanged){
-					currentNode = nodes.get((int) currentNode.getRightChild(currentNode.getKeyCount()));
+					currentNode = nodes.get((int) currentNode.getRightChild(currentNode.giveKey(currentNode.getKeyCount())));
 					currentNodeRecNum = nodes.indexOf(currentNode);
 				}
 			}
@@ -104,9 +120,23 @@ public class BTreeManager{
 
 			//insert like normal if the ndoe isn't full
 			if(currentNode.getNumChild() != 4){
+				for (int i = 1; i <= currentNode.getKeyCount();  i++) {
+					long rootKey = currentNode.giveKey(i);
+					if(key == rootKey){
+						throw new SameKeyException();
+						// return -1;
+					}
+				}
 				//insert
 				currentNode.insert(key,offset);
 			}else if (currentNode.getNumChild() == 4) {
+				for (int i = 1; i <= currentNode.getKeyCount();  i++) {
+					long rootKey = currentNode.giveKey(i);
+					if(key == rootKey){
+						throw new SameKeyException();
+						// return -1;
+					}
+				}
 				//get excess while inserting
 				long[] excess = currentNode.insert(key,offset);
 				//split the node
@@ -200,6 +230,7 @@ public class BTreeManager{
 			Node newRoot = new Node(numRecords++);
 			nodes.add(newRoot);
 			root = newRoot;
+			rootNum = nodes.indexOf(root);
 			//set it as parents for both left and right
 			left.setParent(nodes.indexOf(root));
 			right.setParent(nodes.indexOf(root));
@@ -267,6 +298,10 @@ public class BTreeManager{
 	public void close(){
 		// System.out.println("close method from BTreeManager");
 		try{
+			//write the root and numRecords
+			bt.seek(0);
+			bt.writeLong(numRecords);
+			bt.writeLong(rootNum);
 			// seek to the first long
 			bt.seek(16);
 			
@@ -277,7 +312,7 @@ public class BTreeManager{
 				for (long l : nums) {
 					bt.writeLong(l);
 				}
-				System.out.println(Arrays.toString(nums));
+				System.out.println(Arrays.toString(nums) + " " + i);
 			}
 
 			bt.close();
