@@ -141,8 +141,6 @@ public class Node
 		isLeaf = false;
 		//look for the index number of the key
 		int keyPointer = 2;
-		System.out.println(key);
-		System.out.println(Arrays.toString(keyArray) + recNumb);
 		while(key != keyArray[keyPointer]){
 			keyPointer += 3;
 		}
