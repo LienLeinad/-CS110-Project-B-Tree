@@ -119,7 +119,7 @@ public class BTreeManager{
 			//by this point you're in a leaf node
 
 			//insert like normal if the ndoe isn't full
-			if(currentNode.getNumChild() != 4){
+			if(currentNode.getKeyCount() != 4){
 				for (int i = 1; i <= currentNode.getKeyCount();  i++) {
 					long rootKey = currentNode.giveKey(i);
 					if(key == rootKey){
@@ -128,8 +128,9 @@ public class BTreeManager{
 					}
 				}
 				//insert
+				System.out.println("insert no split");
 				currentNode.insert(key,offset);
-			}else if (currentNode.getNumChild() == 4) {
+			}else if (currentNode.getKeyCount() == 4) {
 				for (int i = 1; i <= currentNode.getKeyCount();  i++) {
 					long rootKey = currentNode.giveKey(i);
 					if(key == rootKey){
@@ -138,6 +139,7 @@ public class BTreeManager{
 					}
 				}
 				//get excess while inserting
+				System.out.println("insert with split");
 				long[] excess = currentNode.insert(key,offset);
 				//split the node
 				split(excess,currentNode, (long) -1);
