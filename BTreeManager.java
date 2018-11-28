@@ -70,36 +70,48 @@ public class BTreeManager{
 			}
 		}else{// root is not a leaf, and has children
 			//locate which leaf to add the key to
-			//look through each key to see which child it belongs to
-			Node nextNode = null;
-			// repeat this process until nextNode is a leaf
-			while(!nextNode.nodeIsLeaf()){
-				for(int i = 1; i < root.getKeyCount(); i++){
-					long keyVal = root.giveKey(i);
-					// if the keyVal is bigger than key, the key belongs in the leftchild of the root
-					if(key < keyVal){
-						nextNode = nodes.get((int) root.getLeftChild(root.giveKey(i)));
-						break;
 
+			// look through root node's keys to figure out where key and offset should be inserted
+			Node currentNode = root;
+			long currentNodeRecNum = currentNode.getRecNum();
+			// look through all the keys of the current node
+			// do this while currentNode is not a leaf
+			while(!currentNode.nodeIsLeaf()){
+				boolean hasChanged = false;
+				for (int i = 1; i < currentNode.getKeyCount();i++) {
+					//get key at index i
+					long nodeKey = currentNode.giveKey(i);
+					//check first if the key and the nodeKey are equal, this is to prevent same keys
+					if(key == nodeKey){
+						throw new SameKeyException();
 					}
-				}
-				// it's a right child if the for loop didn't produce anything
-				if(nextNode == null){
-					nextNode = nodes.get((int) root.getRightChild(root.giveKey(root.getKeyCount())));	
+					// if the nodeKey is greater than key, thereore it belongs to the left child
+					if(key < nodeKey){
+						//look through this node nowwwwwwww
+						currentNode = nodes.get((int) currentNode.getLeftChild(nodeKey));
+						currentNodeRecNum = nodes.indexOf(currentNode);
+						hasChanged = true;
+						break;
+					}
+				}	
+				// if at this point the currentNode hasn't changed, then the right child of the last key is the new currentNode
+				if(!hasChanged){
+					currentNode = nodes.get((int) currentNode.getRightChild(currentNode.getKeyCount()));
+					currentNodeRecNum = nodes.indexOf(currentNode);
 				}
 			}
-			//by this point you should be in a leaf where you belong, add like normal
-			//check if node is not full
-			if(nextNode.getKeyCount() != 4){
-				//add like normal
-				nextNode.insert(key,offset);
-			}else if (root.getKeyCount() == 4) {
-				long[] excess = root.insert(key,offset);
-				split(excess, root, (long) -1);
-			}
+			//by this point you're in a leaf node
 
-
-			
+			//insert like normal if the ndoe isn't full
+			if(currentNode.getNumChild() != 4){
+				//insert
+				currentNode.insert(key,offset);
+			}else if (currentNode.getNumChild() == 4) {
+				//get excess while inserting
+				long[] excess = currentNode.insert(key,offset);
+				//split the node
+				split(excess,currentNode, (long) -1);
+			}			
 		}
 		return rootNum;
 	}

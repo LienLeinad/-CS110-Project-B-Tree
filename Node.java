@@ -281,6 +281,9 @@ public class Node
 		return keyArray[keyPointer];
 	}
 
+	public long getRecNum(){
+		return recNumb;
+	}
 
 	// for debugging purposes
 	public void printArray(){
