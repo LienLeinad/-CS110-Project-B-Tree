@@ -281,6 +281,7 @@ public class Node
 		return keyArray[keyPointer];
 	}
 
+
 	// for debugging purposes
 	public void printArray(){
 		System.out.println(Arrays.toString(keyArray));
