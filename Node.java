@@ -142,8 +142,9 @@ public class Node
 		//look for the index number of the key
 		int keyPointer = 2;
 		System.out.println(key);
+		System.out.println(Arrays.toString(keyArray) + recNumb);
 		while(key != keyArray[keyPointer]){
-			keyPointer += 2;
+			keyPointer += 3;
 		}
 		//increment numChildren
 		numChild++;

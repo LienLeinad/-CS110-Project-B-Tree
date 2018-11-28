@@ -154,6 +154,7 @@ public class BTreeManager{
 			//if the second key of nodeToSplit has a right child
 			if(nodeToSplit.getRightChild(nodeToSplit.giveKey(2)) != -1){
 				//put it in left
+				
 				left.setRightChild(nodeToSplit.giveKey(2), nodeToSplit.getRightChild(nodeToSplit.giveKey(2)));
 			}
 
