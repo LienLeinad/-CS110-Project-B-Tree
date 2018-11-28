@@ -69,7 +69,7 @@ public class BTreeManager{
 					}
 				}
 				//add
-				System.out.println("inserted at root");
+				// System.out.println("inserted at root");
 				root.insert(key,offset);
 			}
 			else if(root.getKeyCount() == 4){//root needs to be split now
@@ -128,7 +128,7 @@ public class BTreeManager{
 					}
 				}
 				//insert
-				System.out.println("insert no split");
+				// System.out.println("insert no split");
 				currentNode.insert(key,offset);
 			}else if (currentNode.getKeyCount() == 4) {
 				for (int i = 1; i <= currentNode.getKeyCount();  i++) {
@@ -139,7 +139,7 @@ public class BTreeManager{
 					}
 				}
 				//get excess while inserting
-				System.out.println("insert with split");
+				// System.out.println("insert with split");
 				long[] excess = currentNode.insert(key,offset);
 				//split the node
 				split(excess,currentNode, (long) -1);
