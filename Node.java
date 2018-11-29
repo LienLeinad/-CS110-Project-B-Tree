@@ -6,9 +6,13 @@ public class Node
 	// otherwise, i think is the only thing that should be static since it's global for all Nodes
 	private long[] keyArray;
 	private int keyCount;
-
-	
-	public Node()
+	private long recNumb;
+	private long[] excess;// if this is filled, then it needs to split
+	private boolean isLeaf; // has no children, if this is false, then it has children
+	private boolean isRoot; // has no parents, basically is batman
+	private int numChild;
+	private long excessChildOffset;
+	public Node(long recNum)
 	{
 		// no parameters - empty node
 		// haven't taken care of splitting case yet
@@ -21,30 +25,145 @@ public class Node
 		}
 		// set starting values for keyCount
 		keyCount = 0;
+		//set the record number for the node
+		recNumb = recNum;
+		//since it's an empty node, it is the first node in the b-tree and thus it is the root
+		isRoot = true;
+		// since it's the first node and it's empty, it has no children, it is a leaf
+		isLeaf = true;
+		//set excess to have empty variables
+		excess = new long[2];
+		excessChildOffset = -1;
 	
 	}
 	
-	public Node(long[] nums){
+	public Node(long[] nums, long recNum){
 		// take nums as the array of the node object
 		keyArray = nums;
 		// count how many are not -1 in the keys to set keyCount
-		for (int i = 2; i < keyArray.length; i += 2 ) {
+		for (int i = 2; i < keyArray.length; i += 3 ) {
 			if(keyArray[i] != (long)-1){
 				keyCount++;
 			}
 		}
+		//set the recordnumber for the node
+		recNumb = recNum;
+		// check if it has children, if it does, it is an internal node
+		for (int i = 1;i < keyArray.length ; i += 3 ) {
+			if(keyArray[i] != -1){
+				isLeaf = false;
+				break;
+			}
+			else{
+				isLeaf = true;
+			}
+		}
+		//check if it has a parent, if it does, it's not batman and is an internal node
+		if(keyArray[0] != -1){
+			isRoot = false;
+		}else{
+			isRoot = true;
+		}
+		excess = new long[2];
+		excessChildOffset = -1;
+	}
 
+	public long getExcessChild(){
+		return excessChildOffset;
+	}
 
+	public void setExcessChild(int offSet){
+		excessChildOffset = offSet;
+	}
+
+	// returns keyCount
+	public int getKeyCount(){
+		return keyCount;
+	}
+
+	//returns true if it is a leaf, false if it is an internal node
+	public boolean nodeIsLeaf(){
+		return isLeaf;
+	}
+
+	public void emptyExcess(){
+		excess[0] = -1;
+		excess[1] = -1;
+	}
+
+	//returns true if it is a root, false if it has a parent and isn't batman
+	public boolean nodeIsRoot(){
+		return isRoot;
+	}
+	// returns recordNumber of leftChild, only to be used when number of nodes in btreemanager is greater than 1
+	public long getLeftChild(long key){
+		long offSet = -1;
+		// look for key
+		for (int i = 2; i < keyArray.length; i+=3 ) {
+			if(keyArray[i] == key){
+				// once its found return the value of the index before it
+				offSet = keyArray[i-1];
+			}
+		}
+		return offSet;
+	}
+	//returns recordNumber of rightChild
+	public long getRightChild(long key){
+		long offSet = -1;
+		// look for key
+		for (int i = 2; i < keyArray.length; i+=3 ) {
+			if(keyArray[i] == key){
+				// once its found return the value of the index before it
+				offSet = keyArray[i+2];
+			}
+		}
+		return offSet;
+	}
+
+	//sets left child of a given key
+	public void setLeftChild(long key, long childOffset){
+		// it's not a leaf anymore
+		isLeaf = false;
+		//look for the index number of the key
+		int keyPointer = 2;
+		while(key != keyArray[keyPointer]){
+			keyPointer += 3;
+		}
+		//increment numChildren
+		numChild++;
+		// insert at the index before it the offset of the left child
+		keyArray[keyPointer-1] = childOffset;
+
+	}
+	//sets right child of a given key
+	public void setRightChild(long key, long childOffset){
+		// tis not a leaf anymore
+		isLeaf = false;
+		//look for the index number of the key
+		int keyPointer = 2;
+		while(key != keyArray[keyPointer]){
+			keyPointer += 3;
+		}
+		//increment numChildren
+		numChild++;
+		// insert at the index After it the offset of the right child
+		keyArray[keyPointer+2] = childOffset;
 
 	}
 
-	public void insert(long keyVal, long keyOffset)throws SameKeyException{
+	public int getNumChild(){
+		return numChild;
+	}
+
+
+	public long[] insert(long keyVal, long keyOffset)throws SameKeyException{
 		if(keyCount == 0) // case for empty Node
 		{
 			// set values for key and offset in the "first" location
 			keyArray[2] = keyVal;
 			keyArray[3] = keyOffset;
 			keyCount++;
+
 			// System.out.println("key: " + keyVal + " offSet num: " + keyOffset + " inserted");
 		}
 		else if (keyCount < 4) // case for less than 4 keys
@@ -87,12 +206,49 @@ public class Node
 			}
 			
 		}
-		else if (keyCount == 4)
+		else if (keyCount == 4)// splitting needed
 		{
-			keyArray[13] = keyVal;
-			System.out.println("Key inserted, node full! No split handling yet!");
-		}
+			boolean hasSameKey = false;
+			for (int i = 2; i < 13; i += 3 ) {
+					if (keyArray[i] == keyVal){
+						hasSameKey = true;
+						break;
+					}
+				}
+				if(hasSameKey){
+					throw new SameKeyException();
+				}
+			// check if the keyVal and offset should be in excess (meaning it's bigger than the biggest key in the node)
+			if(keyVal > keyArray[11]){
+				// if it is bigger, it belongs in excess
+				excess[0] = keyVal;
+				excess[1] = keyOffset;
+			}
+			else{// the last belongs in excess
+				excess[0] = keyArray[11];
+				excess[1] = keyArray[12];
+				//set last to -1 again for inserting purposes
+				keyArray[11] = -1;
+				keyArray[12] = -1;
+				keyCount--;
+				//insert the keyVal in the array
+				insert(keyVal,keyOffset);
+			}
+			
 
+			// System.out.println("Key inserted, node full! No split handling yet!");
+			return excess;
+		}
+		//return nothing if it will not split
+		long[] val = new long[2];
+		val[0] = -1;
+		val[1] = -1;
+		return val;
+
+	}
+
+	public long[] getExcess(){
+		return excess;
 	}
 	public long[] giveArray(){
 		return keyArray;
@@ -116,6 +272,27 @@ public class Node
 
 		// returns the offset value
 		return (int)(3 * count);
+	}
+	// sets parent given a recordNumber
+	public void setParent(long recNum){
+		keyArray[0] = recNum;
+	}
+	public long giveParent(){
+		return keyArray[0];
+	}
+	// gives the nth key of the node, given the index n
+	public long giveKey(int index){
+		int keyPointer = (3*index) - 1;
+		return keyArray[keyPointer];
+	}
+	//gives the nth offset of the node, given index n
+	public long giveOffSet(int index){
+		int keyPointer = 3*index;
+		return keyArray[keyPointer];
+	}
+
+	public long getRecNum(){
+		return recNumb;
 	}
 
 	// for debugging purposes
