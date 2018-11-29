@@ -4,17 +4,16 @@ public class BTreeManager{
 	private long numRecords;
 	private long rootNum;
 	private RandomAccessFile bt;
-	// an ArrayList of nodes
-	private ArrayList<Node> nodes;
-	// global variable for the root node
-	private Node root;
-	public BTreeManager(String name)throws IOException{
+	private ArrayList<Node> nodes; // an ArrayList of nodes
+	private Node root; // global variable for the root node
+
+	public BTreeManager(String name) throws IOException {
 		// instantiate named file as a File object and check if it even exists
 		File myFile = new File(name);
 		// create an ArrayList of nodes to represent the b-tree
 		nodes = new ArrayList<Node>();
 		// for using already existent b-tree files
-		if(myFile.exists()){
+		if (myFile.exists()) {
 			//Create RAF for it
 			bt = new RandomAccessFile(myFile,"rwd");
 			//initialize numRecord as whatever is in byte 0-8
@@ -23,21 +22,17 @@ public class BTreeManager{
 			//initialize rootNum as whatever is in byte 9-16
 			bt.seek(8);
 			rootNum = bt.readLong();
-
+			System.out.println(numRecords);
 			//create the node object for each record and add them into nodes
-			for(int i = 0; i < numRecords; i ++){
+			for (int i = 0; i < numRecords; i ++) {
 				nodes.add(createNode(i));				
 			}
-
-			// nodes.add(createNode(0));
-
 			// point the root to be the one in rootNum
 			root = nodes.get((int)rootNum);
-
-
 		}
+
 		// when creating a NEW B-tree
-		else{
+		else {
 			// create a new RAF for the file
 			bt = new RandomAccessFile(myFile,"rwd");
 			// initialize numrecords to be 0, and the first bit of the file to be 0
@@ -53,53 +48,97 @@ public class BTreeManager{
 			bt.writeLong(rootNum);
 		}	
 	}
+
 	// insert method will insert the key integer as well as its corresponding offset for the object (From the data.val)
 	// returns an int regarding where the current root node is
+
 	//ONLY INSERTS IN ROOT FOR NOW!!!
 	public long insert(long key, long offset) throws SameKeyException{
-		if(rootNum == 0){ // if the root is also the first node
+		if(rootNum == 0 || numRecords == 1){ // if the root is also the first node
 			//check if it's not full
 			if(root.getKeyCount() != 4){
+				//check first if it has a key that's the same as what youre inserting
+				for (int i = 1; i <= root.getKeyCount();  i++) {
+					long rootKey = root.giveKey(i);
+					if(key == rootKey){
+						throw new SameKeyException();
+						// return -1;
+					}
+				}
 				//add
+				// System.out.println("inserted at root");
 				root.insert(key,offset);
 			}
 			else if(root.getKeyCount() == 4){//root needs to be split now
+				for (int i = 1; i <= root.getKeyCount();  i++) {
+					long rootKey = root.giveKey(i);
+					if(key == rootKey){
+						throw new SameKeyException();
+						// return -1;
+					}
+				}
 				long[] excess = root.insert(key,offset);
 				// long excessChild = root.getExcessChild();
 				split(excess, root, (long)-1);
 			}
 		}else{// root is not a leaf, and has children
 			//locate which leaf to add the key to
-			//look through each key to see which child it belongs to
-			Node nextNode = null;
-			// repeat this process until nextNode is a leaf
-			while(!nextNode.nodeIsLeaf()){
-				for(int i = 1; i < root.getKeyCount(); i++){
-					long keyVal = root.giveKey(i);
-					// if the keyVal is bigger than key, the key belongs in the leftchild of the root
-					if(key < keyVal){
-						nextNode = nodes.get((int) root.getLeftChild(root.giveKey(i)));
+			// look through root node's keys to figure out where key and offset should be inserted
+			Node currentNode = root;
+			long currentNodeRecNum = currentNode.getRecNum();
+			// look through all the keys of the current node
+			// do this while currentNode is not a leaf
+			while(!currentNode.nodeIsLeaf()){
+				boolean hasChanged = false;
+				for (int i = 1; i <= currentNode.getKeyCount();i++) {
+					//get key at index i
+					long nodeKey = currentNode.giveKey(i);
+					// if the nodeKey is greater than key, thereore it belongs to the left child
+					if(nodeKey == key){
+						throw new SameKeyException();
+					}
+					if(key < nodeKey){
+						//look through this node nowwwwwwww
+						currentNode = nodes.get((int) currentNode.getLeftChild(nodeKey));
+						currentNodeRecNum = nodes.indexOf(currentNode);
+						hasChanged = true;
 						break;
+					}
+				}	
+				// if at this point the currentNode hasn't changed, then the right child of the last key is the new currentNode
+				if(!hasChanged){
+					currentNode = nodes.get((int) currentNode.getRightChild(currentNode.giveKey(currentNode.getKeyCount())));
+					currentNodeRecNum = nodes.indexOf(currentNode);
+				}
+			}
+			//by this point you're in a leaf node
 
+			//insert like normal if the ndoe isn't full
+			if(currentNode.getKeyCount() != 4){
+				for (int i = 1; i <= currentNode.getKeyCount();  i++) {
+					long rootKey = currentNode.giveKey(i);
+					if(key == rootKey){
+						throw new SameKeyException();
+						// return -1;
 					}
 				}
-				// it's a right child if the for loop didn't produce anything
-				if(nextNode == null){
-					nextNode = nodes.get((int) root.getRightChild(root.giveKey(root.getKeyCount())));	
+				//insert
+				// System.out.println("insert no split");
+				currentNode.insert(key,offset);
+			}else if (currentNode.getKeyCount() == 4) {
+				for (int i = 1; i <= currentNode.getKeyCount();  i++) {
+					long rootKey = currentNode.giveKey(i);
+					if(key == rootKey){
+						throw new SameKeyException();
+						// return -1;
+					}
 				}
-			}
-			//by this point you should be in a leaf where you belong, add like normal
-			//check if node is not full
-			if(nextNode.getKeyCount() != 4){
-				//add like normal
-				nextNode.insert(key,offset);
-			}else if (root.getKeyCount() == 4) {
-				long[] excess = root.insert(key,offset);
-				split(excess, root, (long) -1);
-			}
-
-
-			
+				//get excess while inserting
+				// System.out.println("insert with split");
+				long[] excess = currentNode.insert(key,offset);
+				//split the node
+				split(excess,currentNode, (long) -1);
+			}			
 		}
 		return rootNum;
 	}
@@ -188,6 +227,7 @@ public class BTreeManager{
 			Node newRoot = new Node(numRecords++);
 			nodes.add(newRoot);
 			root = newRoot;
+			rootNum = nodes.indexOf(root);
 			//set it as parents for both left and right
 			left.setParent(nodes.indexOf(root));
 			right.setParent(nodes.indexOf(root));
@@ -251,28 +291,38 @@ public class BTreeManager{
 	public long numNodes(){
 		return numRecords;
 	}
+
 	// writes all nodes into the bt.file before closing
 	public void close(){
 		// System.out.println("close method from BTreeManager");
 		try{
+			//write the root and numRecords
+			bt.seek(0);
+			bt.writeLong(numRecords);
+			bt.writeLong(rootNum);
+
 			// seek to the first long
 			bt.seek(16);
 			
-			for (int i = 0; i < nodes.size(); i ++) {
-				
+			for (int i = 0; i < nodes.size(); i++) {				
 				Node temp = nodes.get(i);
 				long[] nums = temp.giveArray();
+
 				for (long l : nums) {
 					bt.writeLong(l);
 				}
-				System.out.println(Arrays.toString(nums));
+
+				System.out.println(Arrays.toString(nums) + " " + i);
+
 			}
 
 			bt.close();
-		}catch(IOException e){
+
+		} catch(IOException e) {
 			System.out.println("IOException at close method");
 		}
 	}
+
 	// creates the FIRST node of a NEW B-tree
 	public void createFirstNode(){
 		// create a node object which will accept the array, and then increment numRecords by 1, this node will be the root node
@@ -283,8 +333,26 @@ public class BTreeManager{
 
 	//returns offset given a key
 	//TO BE IMPROVED ON ONCE SPLITTING IS IMPLEMENTED
-	public long select(long key){
-		return root.search(key);
+	public long select(long key) throws ArrayIndexOutOfBoundsException{
+		//cuurent node at nodes(0)
+		int j = 0;
+		while(j < nodes.size()){
+			Node currentNode = nodes.get(j);
+			//keyFound boolean is false
+			boolean keyFound = false;
+				for (int i = 1; i <= currentNode.getKeyCount() ; i++ ) {
+					if(currentNode.giveKey(i) == key){
+						//if the key is in the current node we are done
+						return currentNode.select(key);
+					}
+				}
+			//if the key isn't in the node, check another node
+			if(!keyFound){
+				j++;
+			}
+		}
+		throw new ArrayIndexOutOfBoundsException();
+			
 	}
     
 	//returns offset given a key
@@ -299,25 +367,23 @@ public class BTreeManager{
     }
 
 	// given a long from a certain byte, creates a nodeObject for it, to be used for when creating nodes from existing .bt files
-	public Node createNode(long recNum){
+
+	public Node createNode(long recNum) {
 		long[] nums = new long[14];
 		// takes each long from the record in data.bt and adds it into nums
-		try{
+		try {
 			// seek into first long of the record
 			bt.seek(16 + 112*recNum);
-			for(int i = 0; i < nums.length; i++){				
+			for(int i = 0; i < nums.length; i++) {
 				// add to the index
 				nums[i] = bt.readLong();
 			}
-		}catch(IOException e){
-
+		} catch(IOException e) {
 			System.out.println("IOException at createNode");
-		} 
+		}
+
 		//return a newly created node with the array taken from the file
 		return new Node(nums,recNum);
 	}
-
 	//in case of a split, use this code creation method
-
-
 }

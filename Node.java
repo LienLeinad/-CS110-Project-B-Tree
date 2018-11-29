@@ -114,7 +114,7 @@ public class Node
 		for (int i = 2; i < keyArray.length; i+=3 ) {
 			if(keyArray[i] == key){
 				// once its found return the value of the index before it
-				offSet = keyArray[i+1];
+				offSet = keyArray[i+2];
 			}
 		}
 		return offSet;
@@ -127,7 +127,7 @@ public class Node
 		//look for the index number of the key
 		int keyPointer = 2;
 		while(key != keyArray[keyPointer]){
-			keyPointer += 2;
+			keyPointer += 3;
 		}
 		//increment numChildren
 		numChild++;
@@ -147,8 +147,12 @@ public class Node
 		//increment numChildren
 		numChild++;
 		// insert at the index After it the offset of the right child
-		keyArray[keyPointer+1] = childOffset;
+		keyArray[keyPointer+2] = childOffset;
 
+	}
+
+	public int getNumChild(){
+		return numChild;
 	}
 
 	public int getNumChild(){
@@ -201,6 +205,16 @@ public class Node
 		}
 		else if (keyCount == 4)// splitting needed
 		{
+			boolean hasSameKey = false;
+			for (int i = 2; i < 13; i += 3 ) {
+					if (keyArray[i] == keyVal){
+						hasSameKey = true;
+						break;
+					}
+				}
+				if(hasSameKey){
+					throw new SameKeyException();
+				}
 			// check if the keyVal and offset should be in excess (meaning it's bigger than the biggest key in the node)
 			if(keyVal > keyArray[11]){
 				// if it is bigger, it belongs in excess
@@ -230,18 +244,24 @@ public class Node
 
 	}
 
+
+	public long[] getExcess(){
+		return excess;
+	}
+
 	public long[] getExcess(){
 		return excess;
 	}
 	public long[] giveArray(){
 		return keyArray;
 	}
-	public int search(long key) {
+	//given a key, returns offset of the key
+	public long select(long key) throws ArrayIndexOutOfBoundsException {
 		long findKey = 0;
 		long count = 1;
 		long i = 0;
 
-		while (i < 4) {
+		while (i < 5) {
 			// pointer to array
 			findKey = ((3*count) - 1);
 			// if findKey == key then break, you have the key
@@ -253,8 +273,32 @@ public class Node
 			}
 		}
 
+		long temp = (3 * count);
+		long temp2 = keyArray[(int)temp];
+
 		// returns the offset value
-		return (int)(3 * count);
+		return temp2;
+	}
+	// sets parent given a recordNumber
+	public void setParent(long recNum){
+		keyArray[0] = recNum;
+	}
+	public long giveParent(){
+		return keyArray[0];
+	}
+	// gives the nth key of the node, given the index n
+	public long giveKey(int index){
+		int keyPointer = (3*index) - 1;
+		return keyArray[keyPointer];
+	}
+	//gives the nth offset of the node, given index n
+	public long giveOffSet(int index){
+		int keyPointer = 3*index;
+		return keyArray[keyPointer];
+	}
+
+	public long getRecNum(){
+		return recNumb;
 	}
     
     public boolean keyExists(long key)

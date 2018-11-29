@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.*;
 
 public class ValuesManager {
 
@@ -67,13 +68,30 @@ public class ValuesManager {
 		val.writeInt(value.length());
 
 		// Write the String value
-		val.writeBytes(value);
+		val.writeUTF(value);
 
 		// Returns the record number then increments
 		return numRecords++;
 	}
+
+	// returns object string which is the string which the given offset is assigned to
+	// NOTE: THERE'S AN INT BEFORE THE OBJECT WHICH DICTATES HOW LONG THE STRING IS, 
+	// REMEMBER TO READ THAT FIRST AND THEN READ THAT MANY CHARS TO BE ABLE TO KNOW WHAT OBJECT YOU"RE SUPPOSED TO RETURN
+	public String select(long key) throws IOException {
+		// goes to the index number in the file
+		val.seek(8 + (key * 256));
+		
+		// reads the length of the word
+		int len = val.readInt();
+
+		// reads the String and stores it in the objectValue
+		String objectValue = val.readUTF();
+
+		return objectValue;
+	}
+
 	// for same key error
-	public void deleteLast(){
+	public void deleteLast() {
 		numRecords--;
 	}
 
