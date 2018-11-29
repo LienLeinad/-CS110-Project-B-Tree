@@ -54,10 +54,9 @@ public class CS110_Project1 {
 					}
 				} catch(NumberFormatException nfe) {
 					System.out.println("ERROR: invalid key input, Please enter an integer");
-				} catch(IndexOutOfBoundsException iobe) {
-					System.out.println("Error: Syntax error, please put an integer");
-				}
-			}
+				} catch(IOException io){
+          System.out.println("ERROR: please put an integer);
+        }
 
 			else if (cmd.equals("select")) {
 				long key = 0;
@@ -79,8 +78,7 @@ public class CS110_Project1 {
 					update(key, inputs[2]);
 				} catch(NumberFormatException nfe) {
 					System.out.println("ERROR: invalid key input, Please enter an integer");
-
-				} catch(IndexOutOfBoundsException ie) {
+				}catch(IndexOutOfBoundsException ie){
 					System.out.println("Error: Syntax error, please put an integer");
 				}
 			}
