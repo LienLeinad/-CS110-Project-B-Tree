@@ -336,8 +336,26 @@ public class BTreeManager{
 
 	//returns offset given a key
 	//TO BE IMPROVED ON ONCE SPLITTING IS IMPLEMENTED
-	public long select(long key) throws ArrayIndexOutOfBoundsException {
-		return root.select(key);
+	public long select(long key) throws ArrayIndexOutOfBoundsException{
+		//cuurent node at nodes(0)
+		int j = 0;
+		while(j < nodes.size()){
+			Node currentNode = nodes.get(j);
+			//keyFound boolean is false
+			boolean keyFound = false;
+				for (int i = 1; i <= currentNode.getKeyCount() ; i++ ) {
+					if(currentNode.giveKey(i) == key){
+						//if the key is in the current node we are done
+						return currentNode.select(key);
+					}
+				}
+			//if the key isn't in the node, check another node
+			if(!keyFound){
+				j++;
+			}
+		}
+		throw new ArrayIndexOutOfBoundsException();
+			
 	}
 
 	// given a long from a certain byte, creates a nodeObject for it, to be used for when creating nodes from existing .bt files
