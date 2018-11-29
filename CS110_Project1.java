@@ -118,6 +118,27 @@ public class CS110_Project1 {
 	}
 
 	public static void update(long key, String value) {
-		System.out.println( "UPDATED:"+ " "+ key + " " + value);
+		try {
+			// works only with root node for the time being
+			// searches for the offset (and if the key exists)
+			long keyOffset = bt.update(key);
+            if (keyOffset != -1)
+            {
+				// returns the object value once properly updated
+                String stringVal = val.update(keyOffset, value.length(), value);
+                System.out.println("Updated key " + key + " value to be " + stringVal + ".");
+            }
+            else
+            {
+                System.out.printf("ERROR: %d does not exist.\n", key);
+            }
+
+		} catch(IOException ie) {
+			System.out.printf("ERROR: %d does not exist.\n", key);
+		} catch(ArrayIndexOutOfBoundsException ae) {
+			System.out.printf("ERROR: %d does not exist.\n", key);
+		} catch(NumberFormatException nfe){
+		System.out.println("ERROR: invalid command");
+		}
 	}
 }

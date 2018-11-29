@@ -27,7 +27,6 @@ public class BTreeManager{
 			for (int i = 0; i < numRecords; i ++) {
 				nodes.add(createNode(i));				
 			}
-
 			// point the root to be the one in rootNum
 			root = nodes.get((int)rootNum);
 		}
@@ -84,14 +83,12 @@ public class BTreeManager{
 			}
 		}else{// root is not a leaf, and has children
 			//locate which leaf to add the key to
-
 			// look through root node's keys to figure out where key and offset should be inserted
 			Node currentNode = root;
 			long currentNodeRecNum = currentNode.getRecNum();
 			// look through all the keys of the current node
 			// do this while currentNode is not a leaf
 			while(!currentNode.nodeIsLeaf()){
-
 				boolean hasChanged = false;
 				for (int i = 1; i <= currentNode.getKeyCount();i++) {
 					//get key at index i
@@ -357,8 +354,20 @@ public class BTreeManager{
 		throw new ArrayIndexOutOfBoundsException();
 			
 	}
+    
+	//returns offset given a key
+	//similar to select, but current use is specifically for the update method
+    public long update(long key)
+    {
+        if (root.keyExists(key))
+        {
+           return root.giveOffsetValue(key);
+        }
+        return -1;
+    }
 
 	// given a long from a certain byte, creates a nodeObject for it, to be used for when creating nodes from existing .bt files
+
 	public Node createNode(long recNum) {
 		long[] nums = new long[14];
 		// takes each long from the record in data.bt and adds it into nums

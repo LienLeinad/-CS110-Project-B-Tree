@@ -155,6 +155,10 @@ public class Node
 		return numChild;
 	}
 
+	public int getNumChild(){
+		return numChild;
+	}
+
 
 	public long[] insert(long keyVal, long keyOffset)throws SameKeyException{
 		if(keyCount == 0) // case for empty Node
@@ -169,15 +173,8 @@ public class Node
 		else if (keyCount < 4) // case for less than 4 keys
 		{
 			try{
-				boolean hasSameKey = false;
 				//go through entire array of Keys and check for if the keyVale is equal to any of them
-				for (int i = 2; i < 13; i += 3 ) {
-					if (keyArray[i] == keyVal){
-						hasSameKey = true;
-						break;
-					}
-				}
-				if(hasSameKey){
+				if(keyExists(keyVal)){
 					throw new SameKeyException();
 				}
 				else{
@@ -247,6 +244,11 @@ public class Node
 
 	}
 
+
+	public long[] getExcess(){
+		return excess;
+	}
+
 	public long[] getExcess(){
 		return excess;
 	}
@@ -298,7 +300,48 @@ public class Node
 	public long getRecNum(){
 		return recNumb;
 	}
-
+    
+    public boolean keyExists(long key)
+    {
+		//go through entire array of keys and check if the key exists
+		for (int i = 2; i < 13; i += 3 ) {
+			if (keyArray[i] == key){
+				return true;
+			}
+		}
+        return false;
+    }
+    
+    public long giveOffsetValue(long key)
+    {
+        // scan through array and return the offset value
+		// separate method from giveOffset, as this works given a key rather than an index
+        int temp = 0;
+        for (int i = 2; i < 13; i += 3 ) {
+			if (keyArray[i] == key){
+				temp = i;
+			}
+		}
+        return keyArray[temp+1];
+    }
+    
+	// sets parent given a recordNumber
+	public void setParent(long recNum){
+		keyArray[0] = recNum;
+	}
+	public long giveParent(){
+		return keyArray[0];
+	}
+	// gives the nth key of the node, given the index n
+	public long giveKey(int index){
+		int keyPointer = (3*index) - 1;
+		return keyArray[keyPointer];
+	}
+	//gives the nth offset of the node, given index n
+	public long giveOffSet(int index){
+		int keyPointer = 3*index;
+		return keyArray[keyPointer];
+	}
 	// for debugging purposes
 	public void printArray(){
 		System.out.println(Arrays.toString(keyArray));
