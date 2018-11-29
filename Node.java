@@ -253,9 +253,8 @@ public class Node
 	public long[] giveArray(){
 		return keyArray;
 	}
-
 	//given a key, returns offset of the key
-	public long select(long key) {
+	public long select(long key) throws ArrayIndexOutOfBoundsException {
 		long findKey = 0;
 		long count = 1;
 		long i = 0;
