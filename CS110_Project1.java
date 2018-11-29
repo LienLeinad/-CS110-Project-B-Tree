@@ -54,9 +54,8 @@ public class CS110_Project1 {
 					}
 				} catch(NumberFormatException nfe) {
 					System.out.println("ERROR: invalid key input, Please enter an integer");
-				} catch(IOException io){
-          System.out.println("ERROR: please put an integer);
-        }
+				}
+      		}	
 
 			else if (cmd.equals("select")) {
 				long key = 0;
