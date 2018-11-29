@@ -1,7 +1,6 @@
 import java.util.*;
 import java.io.*;
-public class Node
-{
+public class Node {
 	// made everything static so that I could test it in the main method
 	// otherwise, i think is the only thing that should be static since it's global for all Nodes
 	private long[] keyArray;
@@ -12,8 +11,7 @@ public class Node
 	private boolean isRoot; // has no parents, basically is batman
 	private int numChild;
 	private long excessChildOffset;
-	public Node(long recNum)
-	{
+	public Node(long recNum){
 		// no parameters - empty node
 		// haven't taken care of splitting case yet
 		// node record consists of 14 "pointers" of type long int
@@ -37,7 +35,7 @@ public class Node
 	
 	}
 	
-	public Node(long[] nums, long recNum){
+	public Node(long[] nums, long recNum) {
 		// take nums as the array of the node object
 		keyArray = nums;
 		// count how many are not -1 in the keys to set keyCount
@@ -48,6 +46,11 @@ public class Node
 		}
 		//set the recordnumber for the node
 		recNumb = recNum;
+
+	}
+
+	public void insert(long keyVal, long keyOffset) throws SameKeyException {
+		if(keyCount == 0) { // case for empty Node
 		// check if it has children, if it does, it is an internal node
 		for (int i = 1;i < keyArray.length ; i += 3 ) {
 			if(keyArray[i] != -1){
@@ -166,26 +169,28 @@ public class Node
 
 			// System.out.println("key: " + keyVal + " offSet num: " + keyOffset + " inserted");
 		}
-		else if (keyCount < 4) // case for less than 4 keys
-		{
-			try{
+
+		else if (keyCount < 4) {// case for less than 4 keys
+			try {
 				boolean hasSameKey = false;
 				//go through entire array of Keys and check for if the keyVale is equal to any of them
-				for (int i = 2; i < 13; i += 3 ) {
-					if (keyArray[i] == keyVal){
+				for (int i = 2; i < 13; i += 3) {
+					if (keyArray[i] == keyVal) {
 						hasSameKey = true;
 						break;
 					}
 				}
-				if(hasSameKey){
+
+				if (hasSameKey) {
 					throw new SameKeyException();
 				}
-				else{
+
+				else {
 					// j refers to the index of the rightmost keyArray
 					// 3x-1 is used as the locations of the first 4 keys within the array are 2, 5, 8, and 11 respectively
 					int j = ((3*keyCount)-1);
-					while (j >= 2 && keyArray[j] > keyVal) // while loop to move larger values to the right while locating the position for the current key to be inserted
-					{
+					// while loop to move larger values to the right while locating the position for the current key to be inserted
+					while (j >= 2 && keyArray[j] > keyVal) {
 						// this moving and locating algorithm is based off of geeksforgeeks' BTree insertNonFull method
 						// website link: https://www.geeksforgeeks.org/b-tree-set-1-insert-2/
 						keyArray[j+3] = keyArray[j];
@@ -193,6 +198,7 @@ public class Node
 						j = j - 3;
 						// System.out.println("Rearranged successfully");
 					}
+
 					// place value to be inserted and offset to be inserted in their proper place
 					keyArray[j+3] = keyVal;
 					keyArray[j+4] = keyOffset;
@@ -201,10 +207,9 @@ public class Node
 					// System.out.println("key: " + keyVal + " offSet num: " + keyOffset + " inserted");
 				}
 					
-			}catch(IndexOutOfBoundsException iobe){
+			} catch(IndexOutOfBoundsException iobe) {
 				System.out.println("Too many key + objects inserted, please split");
 			}
-			
 		}
 		else if (keyCount == 4)// splitting needed
 		{
@@ -246,19 +251,20 @@ public class Node
 		return val;
 
 	}
-
 	public long[] getExcess(){
 		return excess;
 	}
-	public long[] giveArray(){
+
+	public long[] giveArray() {
 		return keyArray;
 	}
-	public int search(long key) {
+
+	public long select(long key) {
 		long findKey = 0;
 		long count = 1;
 		long i = 0;
 
-		while (i < 4) {
+		while (i < 5) {
 			// pointer to array
 			findKey = ((3*count) - 1);
 			// if findKey == key then break, you have the key
@@ -270,8 +276,11 @@ public class Node
 			}
 		}
 
+		long temp = (3 * count);
+		long temp2 = keyArray[(int)temp];
+
 		// returns the offset value
-		return (int)(3 * count);
+		return temp2;
 	}
 	// sets parent given a recordNumber
 	public void setParent(long recNum){
@@ -296,9 +305,7 @@ public class Node
 	}
 
 	// for debugging purposes
-	public void printArray(){
+	public void printArray() {
 		System.out.println(Arrays.toString(keyArray));
 	}
-	
-
 }
