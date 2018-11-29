@@ -95,21 +95,6 @@ public class ValuesManager {
 		numRecords--;
 	}
 
-	// returns object string which is the string which the given offset is assigned to
-	// NOTE: THERE'S AN INT BEFORE THE OBJECT WHICH DICTATES HOW LONG THE STRING IS, 
-	// REMEMBER TO READ THAT FIRST AND THEN READ THAT MANY CHARS TO BE ABLE TO KNOW WHAT OBJECT YOU"RE SUPPOSED TO RETURN
-	public String select(long key) throws IOException {
-		// goes to the index number in the file
-		val.seek(8 + (key * 256));
-		
-		// reads the length of the word
-		int len = val.readInt();
-
-		// reads the String and stores it in the objectValue
-		String objectValue = val.readUTF();
-
-		return objectValue;
-	}
 	public void close() {
 		try {
 			val.close();

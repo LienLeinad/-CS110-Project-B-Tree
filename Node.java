@@ -155,9 +155,7 @@ public class Node
 		return numChild;
 	}
 
-	public int getNumChild(){
-		return numChild;
-	}
+
 
 
 	public long[] insert(long keyVal, long keyOffset)throws SameKeyException{
@@ -249,9 +247,7 @@ public class Node
 		return excess;
 	}
 
-	public long[] getExcess(){
-		return excess;
-	}
+
 	public long[] giveArray(){
 		return keyArray;
 	}
@@ -325,23 +321,7 @@ public class Node
         return keyArray[temp+1];
     }
     
-	// sets parent given a recordNumber
-	public void setParent(long recNum){
-		keyArray[0] = recNum;
-	}
-	public long giveParent(){
-		return keyArray[0];
-	}
-	// gives the nth key of the node, given the index n
-	public long giveKey(int index){
-		int keyPointer = (3*index) - 1;
-		return keyArray[keyPointer];
-	}
-	//gives the nth offset of the node, given index n
-	public long giveOffSet(int index){
-		int keyPointer = 3*index;
-		return keyArray[keyPointer];
-	}
+
 	// for debugging purposes
 	public void printArray(){
 		System.out.println(Arrays.toString(keyArray));
