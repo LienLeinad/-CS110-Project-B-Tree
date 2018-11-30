@@ -185,6 +185,7 @@ public class Node
 						// website link: https://www.geeksforgeeks.org/b-tree-set-1-insert-2/
 						keyArray[j+3] = keyArray[j];
 						keyArray[j+4] = keyArray[j+1];
+						keyArray[j+5] = keyArray[j+2];
 						j = j - 3;
 						// System.out.println("Rearranged successfully");
 					}
