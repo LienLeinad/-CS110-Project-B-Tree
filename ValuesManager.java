@@ -33,30 +33,30 @@ public class ValuesManager {
 			val.seek(0);
 			val.writeLong(numRecords);	
 		}
-
-		// Record checker
-		// System.out.println("Number of Records: " + numRecords);
 	}
+
 	// updates a certain recordNumber with a different string
-    public String update(long recordNum, int stringLen, String value) throws IOException
-    {
+    public String update(long recordNum, int stringLen, String value) throws IOException {
         // set file pointer to appropriate recordnum location
         val.seek(8+(recordNum*256));
+
 		// writes the proper length of the new string
         val.writeInt(stringLen);
+
 		// immediately sets writeUTF to a blank if the string length is 0
-        if(stringLen == 0)
-        {
+        if(stringLen == 0) {
             val.writeUTF("");
         }
-        else
-        {
+
+        else {
 			// otherwise, properly writes to bytes the string value
             val.writeUTF(value);
         }
+
 		// returns the input string
         return value;
     }
+
 	public long insert(String value) throws IOException {
 		// Update the val file to have correct numRecords
 		val.seek(0);
@@ -77,7 +77,6 @@ public class ValuesManager {
 
 	// returns object string which is the string which the given offset is assigned to
 	// NOTE: THERE'S AN INT BEFORE THE OBJECT WHICH DICTATES HOW LONG THE STRING IS, 
-	// REMEMBER TO READ THAT FIRST AND THEN READ THAT MANY CHARS TO BE ABLE TO KNOW WHAT OBJECT YOU"RE SUPPOSED TO RETURN
 	public String select(long key) throws IOException {
 		// goes to the index number in the file
 		val.seek(8 + (key * 256));
@@ -91,7 +90,7 @@ public class ValuesManager {
 		String objectValue = "";
 		//concatinate the correct amount of characters into empty string
 
-		for(int i = 0; i < len; i++){
+		for(int i = 0; i < len; i++) {
 			objectValue += tempObjectValue.charAt(i);
 		}
 		// return string needed

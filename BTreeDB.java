@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class CS110_Project1 {
+public class BTreeDB {
 
 	private static ValuesManager val;
 	private static BTreeManager bt;
@@ -91,9 +91,10 @@ public class CS110_Project1 {
 	public static void insert(long key, String value) {
 		long recordNumber = -1;
 
-		try{
+		try {
 			// insert the object into the.val file, retrieve its record number within the file
 			recordNumber = val.insert(value);
+
 			// insert the key and the recordnumber into .bt file
 			bt.insert(key,recordNumber);
 			System.out.println(key + " inserted.");
@@ -135,7 +136,7 @@ public class CS110_Project1 {
 		} catch(ArrayIndexOutOfBoundsException ae) {
 			System.out.printf("ERROR: %d does not exist.\n", key);
 		} catch(NumberFormatException nfe){
-		System.out.println("ERROR: invalid command");
+			System.out.println("ERROR: invalid command");
 		}
 	}
 }
