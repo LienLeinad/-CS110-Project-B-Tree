@@ -53,8 +53,10 @@ public class CS110_Project1 {
 						insert(key, inputs[2]);
 					}
 				} catch(NumberFormatException nfe) {
-					System.out.println("ERROR: invalid key input, Please enter an integer");
-				}
+					System.out.println("ERROR: invalid command.");
+				} catch(IndexOutOfBoundsException ie){
+					System.out.println("ERROR: invalid command.");
+				}	
       		}	
 
 			else if (cmd.equals("select")) {
@@ -63,8 +65,10 @@ public class CS110_Project1 {
 					key = Long.parseLong(inputs[1]);	
 					select(key);
 				} catch(NumberFormatException nfe) {
-					System.out.println("ERROR: invalid key input, Please enter an integer");
-				} 				
+					System.out.println("ERROR: invalid command.");
+				} catch(IndexOutOfBoundsException ie){
+					System.out.println("ERROR: invalid command.");
+				}				
 			}
 
 			else if (cmd.equals("update")) {
@@ -73,14 +77,14 @@ public class CS110_Project1 {
 					key = Long.parseLong(inputs[1]);	
 					update(key, inputs[2]);
 				} catch(NumberFormatException nfe) {
-					System.out.println("ERROR: invalid key input, Please enter an integer");
+					System.out.println("ERROR: invalid command.");
 				}catch(IndexOutOfBoundsException ie){
-					System.out.println("Error: Syntax error, please put an integer");
+					System.out.println("ERROR: invalid command.");
 				}
 			}
 
 			else
-				System.out.println("ERROR: invalid command");
+				System.out.println("ERROR: invalid command.");
 		}
 	}
 
@@ -122,16 +126,9 @@ public class CS110_Project1 {
 			// works only with root node for the time being
 			// searches for the offset (and if the key exists)
 			long keyOffset = bt.select(key);
-            if (keyOffset != -1)
-            {
-				// returns the object value once properly updated
-                String stringVal = val.update(keyOffset, value.length(), value);
-                System.out.println("Updated key " + key + " value to be " + stringVal + ".");
-            }
-            else
-            {
-                System.out.printf("ERROR: %d does not exist.\n", key);
-            }
+			// returns the object value once properly updated
+            String stringVal = val.update(keyOffset, value.length(), value);
+            System.out.println(key + " updated.");
 
 		} catch(IOException ie) {
 			System.out.printf("ERROR: %d does not exist.\n", key);

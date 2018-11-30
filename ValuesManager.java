@@ -44,15 +44,15 @@ public class ValuesManager {
         val.seek(8+(recordNum*256));
 		// writes the proper length of the new string
         val.writeInt(stringLen);
-		// immediately sets writeBytes to a blank if the string length is 0
+		// immediately sets writeUTF to a blank if the string length is 0
         if(stringLen == 0)
         {
-            val.writeBytes("");
+            val.writeUTF("");
         }
         else
         {
 			// otherwise, properly writes to bytes the string value
-            val.writeBytes(value);
+            val.writeUTF(value);
         }
 		// returns the input string
         return value;

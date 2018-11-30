@@ -312,8 +312,6 @@ public class BTreeManager{
 					bt.writeLong(l);
 				}
 
-				System.out.println(Arrays.toString(nums) + " " + i);
-
 			}
 
 			bt.close();
