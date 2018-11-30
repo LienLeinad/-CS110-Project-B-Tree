@@ -303,7 +303,11 @@ public class Node
 		//go through entire array of keys and check if the key exists
 		for (int i = 2; i < 13; i += 3 ) {
 			if (keyArray[i] == key){
-				return true;
+				if(key == -1){
+					if(keyArray[i+1] != -1){
+						return true;
+					}
+				}
 			}
 		}
         return false;
