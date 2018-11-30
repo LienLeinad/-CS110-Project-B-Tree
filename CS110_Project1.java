@@ -121,7 +121,7 @@ public class CS110_Project1 {
 		try {
 			// works only with root node for the time being
 			// searches for the offset (and if the key exists)
-			long keyOffset = bt.update(key);
+			long keyOffset = bt.select(key);
             if (keyOffset != -1)
             {
 				// returns the object value once properly updated

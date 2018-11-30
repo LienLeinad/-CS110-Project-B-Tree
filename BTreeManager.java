@@ -355,16 +355,6 @@ public class BTreeManager{
 			
 	}
     
-	//returns offset given a key
-	//similar to select, but current use is specifically for the update method
-    public long update(long key)
-    {
-        if (root.keyExists(key))
-        {
-           return root.giveOffsetValue(key);
-        }
-        return -1;
-    }
 
 	// given a long from a certain byte, creates a nodeObject for it, to be used for when creating nodes from existing .bt files
 

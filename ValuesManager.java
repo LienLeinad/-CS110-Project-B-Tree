@@ -37,6 +37,7 @@ public class ValuesManager {
 		// Record checker
 		// System.out.println("Number of Records: " + numRecords);
 	}
+	// updates a certain recordNumber with a different string
     public String update(long recordNum, int stringLen, String value) throws IOException
     {
         // set file pointer to appropriate recordnum location
@@ -85,7 +86,15 @@ public class ValuesManager {
 		int len = val.readInt();
 
 		// reads the String and stores it in the objectValue
-		String objectValue = val.readUTF();
+		String tempObjectValue = val.readUTF();
+		//instantiate empty string
+		String objectValue = "";
+		//concatinate the correct amount of characters into empty string
+
+		for(int i = 0; i < len; i++){
+			objectValue += tempObjectValue.charAt(i);
+		}
+		// return string needed
 
 		return objectValue;
 	}
